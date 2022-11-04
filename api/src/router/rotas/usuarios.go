@@ -1,7 +1,7 @@
 package rotas
 
 import (
-	"api/src/router/rotas/controllers"
+	"api/src/controllers"
 	"net/http"
 )
 
