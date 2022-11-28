@@ -31,7 +31,7 @@ var rotasUsuarios = []Rota{
 		RequerAutenticacao: false,
 	},
 	{
-		URI:                "/usuarios",
+		URI:                "/usuarios/{usuarioId}",
 		Metodo:             http.MethodDelete,
 		Funcao:             controllers.ExcluirUsuario,
 		RequerAutenticacao: false,
