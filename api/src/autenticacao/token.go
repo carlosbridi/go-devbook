@@ -2,6 +2,7 @@ package autenticacao
 
 import (
 	"api/src/config"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -27,8 +28,11 @@ func ValidarToken(r *http.Request) error {
 		return erro
 	}
 
-	fmt.Println(token)
-	return nil
+	if _, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		return nil
+	}
+
+	return errors.New("Token inválido")
 }
 
 func extrairToken(r *http.Request) string {
