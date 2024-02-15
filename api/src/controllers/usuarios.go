@@ -8,7 +8,6 @@ import (
 	"api/src/respostas"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -287,7 +286,6 @@ func BuscarSeguidores(w http.ResponseWriter, r *http.Request) {
 
 	usuarioId, erro := strconv.ParseUint(parametros["usuarioId"], 10, 64)
 
-	fmt.Print(usuarioId)
 	if erro != nil {
 		respostas.Erro(w, http.StatusBadRequest, erro)
 		return
@@ -306,7 +304,6 @@ func BuscarSeguidores(w http.ResponseWriter, r *http.Request) {
 	seguidores, erro := repositorio.BuscarSeguidores(usuarioId)
 
 	if erro != nil {
-		fmt.Print("Here a bug")
 		respostas.JSON(w, http.StatusInternalServerError, erro)
 		return
 	}
