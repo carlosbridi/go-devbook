@@ -9,7 +9,6 @@ import (
 	"api/src/seguranca"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -402,9 +401,6 @@ func AtualizarSenha(w http.ResponseWriter, r *http.Request) {
 		respostas.Erro(w, http.StatusInternalServerError, erro)
 		return
 	}
-
-	fmt.Println(senhaSalvaBanco)
-	fmt.Println(string(senhaComHash))
 
 	if erro = repositorio.AtualizarSenha(usuarioId, string(senhaComHash)); erro != nil {
 		respostas.Erro(w, http.StatusInternalServerError, erro)
