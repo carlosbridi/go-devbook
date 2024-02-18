@@ -2,8 +2,11 @@ package controllers
 
 import (
 	"api/src/banco"
+	"api/src/modelos"
 	"api/src/repositorios"
 	"api/src/respostas"
+	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 
@@ -12,6 +15,35 @@ import (
 
 func CriarPublicacao(w http.ResponseWriter, r *http.Request) {
 
+	corpoRequest, erro := ioutil.ReadAll(r.Body)
+	if erro != nil {
+		respostas.Erro(w, http.StatusUnprocessableEntity, erro)
+		return
+	}
+
+	var publicacao modelos.Publicacao
+	if erro = json.Unmarshal(corpoRequest, &publicacao); erro != nil {
+		respostas.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	db, erro := banco.Conectar()
+	if erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	repositorio := repositorios.NovoRepositorioPublicacao(db)
+
+	publicacao.ID, erro = repositorio.CriarPublicacao(publicacao)
+
+	if erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	respostas.JSON(w, http.StatusCreated, publicacao)
 }
 
 func BuscarPublicacoes(w http.ResponseWriter, r *http.Request) {
