@@ -28,7 +28,6 @@ func (repositorio Publicacao) BuscarPublicacao(publicacaoId uint64) (modelos.Pub
 
 	var publicacao modelos.Publicacao
 	if linhas.Next() {
-		fmt.Println("Here")
 		if erro = linhas.Scan(
 			&publicacao.ID,
 			&publicacao.Titulo,
@@ -38,7 +37,6 @@ func (repositorio Publicacao) BuscarPublicacao(publicacaoId uint64) (modelos.Pub
 			&publicacao.Curtidas,
 			&publicacao.CriadaEm,
 		); erro != nil {
-			fmt.Println("haere")
 			return modelos.Publicacao{}, erro
 		}
 	}
