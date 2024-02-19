@@ -16,13 +16,13 @@ func NovoRepositorioPublicacao(db *sql.DB) *Publicacao {
 
 func (repositorio Publicacao) CriarPublicacao(publicacao modelos.Publicacao) (uint64, error) {
 
-	statement, erro := repositorio.db.Prepare("insert into publicacao (titluo, conteudo, autor_id, autor_nick) values (?,?,?,?,?)")
+	statement, erro := repositorio.db.Prepare("insert into publicacoes (titulo, conteudo, autor_id) values (?,?,?)")
 
 	if erro != nil {
 		return 0, erro
 	}
 
-	resultado, erro := statement.Exec(publicacao.Titulo, publicacao.Conteudo, publicacao.AutorId, publicacao.AutorNick)
+	resultado, erro := statement.Exec(publicacao.Titulo, publicacao.Conteudo, publicacao.AutorId)
 	if erro != nil {
 		return 0, erro
 	}

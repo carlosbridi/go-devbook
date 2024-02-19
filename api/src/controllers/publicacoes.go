@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"api/src/autenticacao"
 	"api/src/banco"
 	"api/src/modelos"
 	"api/src/repositorios"
@@ -15,6 +16,12 @@ import (
 
 func CriarPublicacao(w http.ResponseWriter, r *http.Request) {
 
+	usuarioId, erro := autenticacao.ExtrairUsuarioID(r)
+	if erro != nil {
+		respostas.Erro(w, http.StatusUnauthorized, erro)
+		return
+	}
+
 	corpoRequest, erro := ioutil.ReadAll(r.Body)
 	if erro != nil {
 		respostas.Erro(w, http.StatusUnprocessableEntity, erro)
@@ -26,6 +33,8 @@ func CriarPublicacao(w http.ResponseWriter, r *http.Request) {
 		respostas.Erro(w, http.StatusBadRequest, erro)
 		return
 	}
+
+	publicacao.AutorId = usuarioId
 
 	db, erro := banco.Conectar()
 	if erro != nil {
