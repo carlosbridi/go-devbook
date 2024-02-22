@@ -1,7 +1,6 @@
 package modelos
 
 import (
-	"api/src/modelos"
 	"errors"
 	"strings"
 	"time"
@@ -18,7 +17,7 @@ type Publicacao struct {
 	CriadaEm  time.Time `json:"criadaEm,omitempty"`
 }
 
-func (publicacao *modelos.Publicacao) Preparar() error {
+func (publicacao *Publicacao) Preparar() error {
 	if erro := publicacao.validar(); erro != nil {
 		return erro
 	}
@@ -27,7 +26,7 @@ func (publicacao *modelos.Publicacao) Preparar() error {
 	return nil
 }
 
-func (publicacao *modelos.Publicacao) validar() error {
+func (publicacao *Publicacao) validar() error {
 	if publicacao.Titulo == "" {
 		return errors.New("Título é obrigatório")
 	}
@@ -37,7 +36,7 @@ func (publicacao *modelos.Publicacao) validar() error {
 	return nil
 }
 
-func (publicacao *modelos.Publicacao) formatar() {
+func (publicacao *Publicacao) formatar() {
 	publicacao.Titulo = strings.TrimSpace(publicacao.Titulo)
 	publicacao.Conteudo = strings.TrimSpace(publicacao.Conteudo)
 }

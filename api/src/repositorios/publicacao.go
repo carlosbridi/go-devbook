@@ -63,5 +63,20 @@ func (repositorio Publicacao) BuscarPublicacao(publicacaoId uint64) (modelos.Pub
 	fmt.Println(publicacao)
 
 	return publicacao, nil
+}
+
+func (repositorio Publicacao) DeletarPublicacao(autorId, publicacaoId uint64) error {
+
+	statement, erro := repositorio.db.Prepare("DELETE FROM publicacaoes where id = ? where autor_id")
+	if erro != nil {
+		return erro
+	}
+	defer statement.Close()
+
+	if _, erro = statement.Exec(publicacaoId, autorId); erro != nil {
+		return erro
+	}
+
+	return nil
 
 }
