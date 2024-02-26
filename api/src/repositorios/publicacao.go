@@ -35,6 +35,39 @@ func (repositorio Publicacao) CriarPublicacao(publicacao modelos.Publicacao) (ui
 	return uint64(ultimoIdInserido), nil
 }
 
+func (repositorio Publicacao) BuscarPublicacoes(autorId uint64) ([]modelos.Publicacao, error) {
+
+	linhas, erro := repositorio.db.Query(
+		`select distinct p.*, u.nick 
+			from publicacoes p 
+		  inner join usuarios u on p.autor_id = u.id
+		  inner join seguidores s on s.usuario_id = p.id
+	   	  where u.id = ? or s.seguidor_id = ?`, autorId, autorId)
+
+	if erro != nil {
+		return nil, erro
+	}
+
+	var publicacaoes []modelos.Publicacao
+	for linhas.Next() {
+		var publicacao modelos.Publicacao
+		if erro = linhas.Scan(
+			&publicacao.ID,
+			&publicacao.Titulo,
+			&publicacao.Conteudo,
+			&publicacao.Curtidas,
+			&publicacao.AutorId,
+			&publicacao.AutorNick,
+		); erro != nil {
+			return nil, erro
+		}
+
+		publicacaoes = append(publicacaoes, publicacao)
+	}
+	return publicacaoes, nil
+
+}
+
 func (repositorio Publicacao) BuscarPublicacao(publicacaoId uint64) (modelos.Publicacao, error) {
 
 	linhas, erro := repositorio.db.Query(`select p.id, p.titulo, p.conteudo, p.autor_id, u.nick, p.curtidas, p.criadoem from publicacoes p 
