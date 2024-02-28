@@ -169,12 +169,60 @@ func AtualizarPublicacao(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if erro = repositorio.Atualizar(); erro != nil {
+	if erro = repositorio.AtualizarPublicacao(publicacaoId, publicacao); erro != nil {
 		respostas.Erro(w, http.StatusInternalServerError, erro)
 	}
 
 	respostas.JSON(w, http.StatusNoContent, nil)
 
+}
+
+func CurtirPublicacao(w http.ResponseWriter, r *http.Request) {
+	parametros := mux.Vars(r)
+	publicacaoId, erro := strconv.ParseUint(parametros["publicacaoId"], 10, 64)
+	if erro != nil {
+		respostas.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	db, erro := banco.Conectar()
+	if erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	repositorio := repositorios.NovoRepositorioPublicacao(db)
+
+	if erro = repositorio.CurtirPublicacao(publicacaoId); erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+	}
+
+	respostas.JSON(w, http.StatusNoContent, nil)
+}
+
+func DescurtirPublicacao(w http.ResponseWriter, r *http.Request) {
+	parametros := mux.Vars(r)
+	publicacaoId, erro := strconv.ParseUint(parametros["publicacaoId"], 10, 64)
+	if erro != nil {
+		respostas.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	db, erro := banco.Conectar()
+	if erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	repositorio := repositorios.NovoRepositorioPublicacao(db)
+
+	if erro = repositorio.DescurtirPublicacao(publicacaoId); erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+	}
+
+	respostas.JSON(w, http.StatusNoContent, nil)
 }
 
 func DeletarPublicacao(w http.ResponseWriter, r *http.Request) {
@@ -200,6 +248,19 @@ func DeletarPublicacao(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	repositorio := repositorios.NovoRepositorioPublicacao(db)
+
+	publicacaoSalvaBanco, erro := repositorio.BuscarPublicacao(publicacaoId)
+
+	if erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	if publicacaoSalvaBanco.AutorId != autorId {
+		respostas.Erro(w, http.StatusForbidden, errors.New("Usuário não pode atualizar uma publicação que não seja sua"))
+		return
+	}
+
 	repositorio.DeletarPublicacao(autorId, publicacaoId)
 
 	respostas.JSON(w, http.StatusNoContent, nil)

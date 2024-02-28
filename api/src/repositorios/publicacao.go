@@ -117,13 +117,45 @@ func (repositorio Publicacao) AtualizarPublicacao(publicacaoId uint64, publicaca
 
 func (repositorio Publicacao) DeletarPublicacao(autorId, publicacaoId uint64) error {
 
-	statement, erro := repositorio.db.Prepare("DELETE FROM publicacaoes where id = ? where autor_id")
+	statement, erro := repositorio.db.Prepare("DELETE FROM publicacoes where id = ? where autor_id")
 	if erro != nil {
 		return erro
 	}
 	defer statement.Close()
 
 	if _, erro = statement.Exec(publicacaoId, autorId); erro != nil {
+		return erro
+	}
+
+	return nil
+
+}
+
+func (repositorio Publicacao) CurtirPublicacao(publicacaoId uint64) error {
+	fmt.Println(publicacaoId)
+	statement, erro := repositorio.db.Prepare("update publicacoes set curtidas = curtidas + 1 where id = ?")
+	if erro != nil {
+		return erro
+	}
+	defer statement.Close()
+
+	if _, erro = statement.Exec(publicacaoId); erro != nil {
+		return erro
+	}
+
+	return nil
+
+}
+
+func (repositorio Publicacao) DescurtirPublicacao(publicacaoId uint64) error {
+	fmt.Println(publicacaoId)
+	statement, erro := repositorio.db.Prepare("update publicacoes set curtidas = curtidas - 1 where id = ? and curtidas > 0")
+	if erro != nil {
+		return erro
+	}
+	defer statement.Close()
+
+	if _, erro = statement.Exec(publicacaoId); erro != nil {
 		return erro
 	}
 
